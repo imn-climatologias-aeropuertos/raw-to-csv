@@ -5,6 +5,7 @@ from typing import Annotated, Optional
 
 import typer
 
+from rich import print as rprint
 from rich.progress import track
 
 from .__version__ import __version__
@@ -15,7 +16,7 @@ app = typer.Typer()
 
 def version_callback(version: bool) -> None:
     if version:
-        print(f"raw-to-csv, version {__version__}")
+        rprint(f"raw-to-csv, version {__version__}")
         raise typer.Exit()
 
 
@@ -31,12 +32,21 @@ def main(
         ),
     ] = None,
 ) -> None:
-    print("metar-datasets CLI")
+    rprint("metar-datasets CLI")
 
 
 @app.command("to-csv")
-def create_csv_file() -> None:
-    data_path = "./data/mrlb/"
+def create_csv_file(
+    station: Annotated[
+        str,
+        typer.Argument(
+            case_sensitive=True, help="ICAO code of the station data to process."
+        ),
+    ] = "mroc",
+) -> None:
+    rprint(f"Processing data for {station.upper()}...")
+
+    data_path = f"./data/{station}/"
     dfiles = glob.glob("*.txt", root_dir=data_path)
     dfiles.sort()
 
@@ -57,6 +67,8 @@ def create_csv_file() -> None:
                 tup = parse_line(line)
                 metar = create_metar(tup)
                 csvfile.write(metar_to_csv(metar))
+
+    rprint(f"Data processed successfully, you can find the CSV file at {data_path}.")
 
 
 if __name__ == "__main__":

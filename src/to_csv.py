@@ -116,7 +116,7 @@ def process_weather(weathers: GroupList[MetarWeather]) -> str:
             prec = process_precipitation(w.precipitation)
             obsc = process_obscuration(w.obscuration)
         except IndexError:
-            pass
+            break
 
     s += f"{ints},{desc},{prec},{obsc}"
 
@@ -180,10 +180,8 @@ def metar_to_csv(m: Metar) -> str:
     s += f",{num_to_str(m.wind.gust_in_knot)}"
     s += f",{num_to_str(m.prevailing_visibility.in_meters)}"
     s += f",{cavok_to_bin(m.prevailing_visibility.cavok)}"
-
     s += f",{process_weather(m.weathers)}"
     s += f",{process_clouds(m.clouds)}"
-
     s += f",{num_to_str(m.temperatures.temperature_in_celsius)}"
     s += f",{num_to_str(m.temperatures.dewpoint_in_celsius)}"
     s += f",{num_to_str(m.pressure.in_inHg, sig=2)}"
