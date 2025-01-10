@@ -161,7 +161,7 @@ def process_clouds(clouds: CloudList) -> str:
             c = clouds[i]
             s += f"{process_cloud_layer(c)},"
         except IndexError:
-            s += "null,null,null,"
+            s += "null,null,null"
 
     return s
 
